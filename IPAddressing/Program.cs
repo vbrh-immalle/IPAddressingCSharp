@@ -65,7 +65,36 @@ namespace IPAddressing
 
             Console.WriteLine(System.Net.IPAddress.IsLoopback(addr1)); // 127.0.0.1 is a loopback ip
             Console.WriteLine(System.Net.IPAddress.IsLoopback(addr2)); // 192.0.0.1 is not a loopback ip
+
+
+
+            // let's try some subnet calculations
+
+            //uint ip = 0x01010100; // 1.1.1.0
+            uint ip = 0x0C0D0E0F; // 12.13.14.15
+            int nrOfNetmaskBits = 24;
+            uint mask = 0x80000000; // only first bit = 1
             
+            for(var i = 1; i < nrOfNetmaskBits; i++)
+            {
+                mask = mask >> 1;
+                mask += 0x80000000; // add new first bit = 1
+            }
+
+            int nrOfNets = (int)Math.Pow(2, nrOfNetmaskBits); // TODO: should ignore 0.x.y.z
+            uint net = ip & mask;
+            uint nrOfHosts = (uint)(Math.Pow(2, 32 - nrOfNetmaskBits) - 2); // - 2, because 1 for broadcast, 1 for network
+            Console.Write("Ip address: "); PrintIPUInt(ip);
+            Console.Write("Netmask: "); PrintIPUInt(mask);
+            Console.WriteLine("  -->");
+            Console.WriteLine("  nr of Nets: " + nrOfNets);
+            Console.WriteLine("  nr of hosts: " + nrOfHosts);
+            Console.Write("  Network: "); PrintIPUInt(net);
+            Console.Write("  First host: "); PrintIPUInt(net + 1);
+            Console.Write("  Last host: "); PrintIPUInt(net + nrOfHosts);
+            uint thisIpHostNr = ~mask & ip;
+            uint thisIpNetNr = (mask & ip) >> (32 - nrOfNetmaskBits); // TODO
+            Console.WriteLine("  The IP is the {0}th (0x{0:X}) host of the {1}th (0x{1:X}) net.", thisIpHostNr, thisIpNetNr);
             
 
         }
