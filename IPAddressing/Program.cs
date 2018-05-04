@@ -6,8 +6,23 @@ namespace IPAddressing
     {
         static void Main(string[] args)
         {
+            TrySomeSimpleDataStructures();
+            Console.WriteLine();
+            TryDotnetsIPAddressClass();
+            Console.WriteLine();
+            TrySomeSubnetCalculations();
+            Console.WriteLine();
+            TrySomeSubnetCalculations("192.168.0.1", 24);
+            Console.WriteLine();
+            TrySomeSubnetCalculations("192.168.1.1", 24);
+            Console.WriteLine();
+        }
+
+        static void TrySomeSimpleDataStructures()
+        {
+            Console.WriteLine("Some experiments with simple data structures to store IP addresses");
             // An IPv4 address has 4 bytes.
-            
+
             // Theoretically we could use an unsigned int to store it.
 
             // We use hexadecimal notation to store the "ip address" 255.255.255.255.
@@ -20,7 +35,7 @@ namespace IPAddressing
             // 0 = 0x00 = 0000 0000
             // 1 = 0x1 (hex) = 0000 0001
             uint ip_address_uint = 0xC0A80001;
-            
+
             // We could also store it in an array of 4 unsigned bytes
             byte[] ip_address_bytes = new byte[4];
 
@@ -44,8 +59,10 @@ namespace IPAddressing
             PrintIPUInt(addr1_uint2);
             PrintIPBytes(addr1_bytes1);
             PrintIPBytes(addr1_bytes2);
+        }
 
-
+        static void TryDotnetsIPAddressClass()
+        {
             // But guess what? DotNet already contains an IPAddress class...
             Console.WriteLine("System.Net.IPAddress experiments");
 
@@ -53,9 +70,11 @@ namespace IPAddressing
             // Or check https://docs.microsoft.com/nl-nl/dotnet/api/ and look for IPAddress
 
             // One of the constructors takes a byte[]
-            System.Net.IPAddress addr1 = new System.Net.IPAddress(addr1_bytes1);
+            byte[] addr1_bytes1 = CreateAddressBytes("127.0.0.1"); // let's use our own function to create some bytes ...
+            System.Net.IPAddress addr1 = new System.Net.IPAddress(addr1_bytes1); // ... and pass them to IPAddress's constructor
 
             // There is also a static method that can parse a string!
+            // (No need for our own method anymore...)
             System.Net.IPAddress addr2 = System.Net.IPAddress.Parse("192.0.0.1");
 
             // Now we can check what properties and methods IPAddress-objects have:
@@ -66,20 +85,30 @@ namespace IPAddressing
             Console.WriteLine(System.Net.IPAddress.IsLoopback(addr1)); // 127.0.0.1 is a loopback ip
             Console.WriteLine(System.Net.IPAddress.IsLoopback(addr2)); // 192.0.0.1 is not a loopback ip
 
+            // Use code completion (or browse reference documentation) to check the other:
+            // - object properties and methods
+            // - static methods
+        }
 
+        // change the default arguments or call with other values!
+        static void TrySomeSubnetCalculations(string ipString = "12.13.14.15", int nrOfNetmaskBits = 24)
+        {
+            Console.WriteLine($"Calculating info about {ipString} with {nrOfNetmaskBits} netmask-bits.");
+            uint ip = CreateAddressUInt(ipString);
 
             // let's try some subnet calculations
+            // (compare with http://jodies.de/ipcalc or other ip calculators)
 
-            //uint ip = 0x01010100; // 1.1.1.0
-            uint ip = 0x0C0D0E0F; // 12.13.14.15
-            int nrOfNetmaskBits = 24;
-            uint mask = 0x80000000; // only first bit = 1
-            
-            for(var i = 1; i < nrOfNetmaskBits; i++)
+            uint mask = 0x80000000; // (0x80 00 00 00) = (1000 0000 0000 0000 0000 0000 0000 0000) --> we start with 1 bit ...
+
+            // .. and loop until the variable `mask` is filled with enough bits:
+            for (var i = 1; i < nrOfNetmaskBits; i++)
             {
-                mask = mask >> 1;
-                mask += 0x80000000; // add new first bit = 1
+                mask = mask >> 1; // shift a bit
+                mask += 0x80000000; // add a bit
             }
+
+            // when nrOfNetmaskBits = 24 ---> mask is now (1111 1111 1111 1111 1111 1111 0000 0000) = 240
 
             int nrOfNets = (int)Math.Pow(2, nrOfNetmaskBits); // TODO: should ignore 0.x.y.z
             uint net = ip & mask;
@@ -95,9 +124,13 @@ namespace IPAddressing
             uint thisIpHostNr = ~mask & ip;
             uint thisIpNetNr = (mask & ip) >> (32 - nrOfNetmaskBits); // TODO
             Console.WriteLine("  The IP is the {0}th (0x{0:X}) host of the {1}th (0x{1:X}) net.", thisIpHostNr, thisIpNetNr);
-            
-
         }
+
+
+
+        // Printing functions:
+        // -------------------
+
 
         static void PrintIPUInt(uint ip)
         {
@@ -123,6 +156,12 @@ namespace IPAddressing
             // we assume element 0 is the Most Significant Byte (MSB)
             Console.WriteLine("{0}.{1}.{2}.{3}", ip[0], ip[1], ip[2], ip[3]);
         }
+
+        
+
+        // Creation functions:
+        // -------------------
+
 
         // Will (most likely) throw exceptions if not a correct string!
         static uint CreateAddressUInt(string ipstring)
