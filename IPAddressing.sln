@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPAddressing", "IPAddressing\IPAddressing.csproj", "{E6EE0E65-07EF-4531-9625-8020E89EFB0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPAddressing", "IPAddressing\IPAddressing.csproj", "{E6EE0E65-07EF-4531-9625-8020E89EFB0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F560F5A-8078-48D7-B8C8-CE6AF0C4EB72}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
