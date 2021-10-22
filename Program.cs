@@ -63,10 +63,10 @@ namespace IPAddressing
 
         static void TryDotnetsIPAddressClass()
         {
-            // But guess what? DotNet already contains an IPAddress class...
+            // But guess what! DotNet has it's own IPAddress class!
             Console.WriteLine("System.Net.IPAddress experiments");
 
-            // Also see: https://docs.microsoft.com/nl-nl/dotnet/api/system.net.ipaddress?view=netcore-2.0
+            // Also see: https://docs.microsoft.com/nl-nl/dotnet/api/system.net.ipaddress?view=net-5.0
             // Or check https://docs.microsoft.com/nl-nl/dotnet/api/ and look for IPAddress
 
             // One of the constructors takes a byte[]
